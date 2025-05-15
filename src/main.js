@@ -29,7 +29,7 @@
       return;
     }
 
-    const messageEl = document.querySelector('p[data-waitly-message]');
+    const messageEl = document.querySelector('p[data-waitly-message], div[data-waitly-message]');
 
     function showMessage(msg) {
       if (messageEl) {
@@ -50,18 +50,24 @@
       }
 
       try {
-        const response = await fetch("https://your-nuxt-api.com/api/leads", {
+        const response = await fetch("http://localhost:3000/api/leads", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, projectId }),
         });
 
         if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(errorText || 'Server error');
+            let errorData;
+            try {
+            errorData = await response.json();
+            } catch (e) {
+            errorData = { message: await response.text() };
+            }
+            const errorText = (errorData.message + '.') || "Server error";
+          throw new Error(errorText);
         }
 
-        const data = await response.json();
+        const data = await response.text();
         console.log("[Waitly] Lead added:", data);
 
         if (ty === "redirect" && payload) {
@@ -77,7 +83,7 @@
 
       } catch (err) {
         console.error("[Waitly] Submission error:", err);
-        showMessage(`Error: ${err.message || err}`);
+        showMessage(err.message || 'Server error');
       }
     });
   });
