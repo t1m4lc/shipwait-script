@@ -10,6 +10,9 @@
   const projectId = params.projectId;
   const ty = params.ty;       // "redirect" or "message"
   const payload = params.payload;
+  
+  // Define the baseUrl from environment variables with a fallback
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
   if (!projectId) {
     console.warn("[Waitly] Missing projectId in script src query params.");
@@ -50,7 +53,7 @@
       }
 
       try {
-        const response = await fetch("http://localhost:3000/api/leads", {
+        const response = await fetch(`${baseUrl}/api/leads`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, projectId }),

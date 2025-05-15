@@ -6,7 +6,7 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, 'src/main.js'),
       name: 'WaitlySnippet',
-      fileName: (format) => `waitly-snippet.umd.js`,
+      fileName: () => `main.js`,
       formats: ['umd'],
     }
   },
