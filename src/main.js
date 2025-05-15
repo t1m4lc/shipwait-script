@@ -8,10 +8,9 @@
   const params = getQueryParams(currentScript?.src || "");
 
   const projectId = params.projectId;
-  const ty = params.ty;       // "redirect" or "message"
+  const ty = params.ty;
   const payload = params.payload;
   
-  // Define the baseUrl from environment variables with a fallback
   const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
   if (!projectId) {
@@ -78,7 +77,7 @@
           return;
         }
 
-        if (ty === "message" && payload) {
+        if (ty === "show_message" && payload) {
           showMessage(payload);
         } 
         
