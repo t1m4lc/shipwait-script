@@ -6,15 +6,14 @@
 
   const currentScript = document.currentScript;
   const params = getQueryParams(currentScript?.src || "");
-
   const projectId = params.id
-
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
-
+  
   if (!projectId) {
     console.warn("[Shipwait] Missing projectId in script!");
     return;
   }
+
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
   async function fetchBehavior() {
     try {
@@ -46,12 +45,23 @@
     }
 
     const messageEl = document.querySelector("[data-shipwait-message]");
+    const submitButton = form.querySelector("button[type='submit']");
+    const originalButtonText = submitButton ? submitButton.textContent : "Submit";
 
     function showMessage(msg) {
       if (messageEl) {
         messageEl.textContent = msg;
       } else {
         alert(msg);
+      }
+    }
+
+    function setLoading(isLoading) {
+      input.disabled = isLoading;
+      
+      if (submitButton) {
+        submitButton.disabled = isLoading;
+        submitButton.textContent = isLoading ? `${originalButtonText}...` : originalButtonText;
       }
     }
 
@@ -64,12 +74,14 @@
         return;
       }
 
-      const behavior = await fetchBehavior();
-
-      const behaviorType = behavior?.type || "do_nothing";
-      const behaviorPayload = behavior?.payload || null;
+      setLoading(true);
 
       try {
+        const behavior = await fetchBehavior();
+
+        const behaviorType = behavior?.behavior_type || "do_nothing";
+        const behaviorPayload = behaviorType === 'redirect' ? behavior?.redirect : (behavior?.message || null);
+
         const response = await fetch(`${baseUrl}/api/leads`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -101,6 +113,8 @@
         input.value = "";
       } catch (err) {
         showMessage(err.message || "Server error");
+      } finally {
+        setLoading(false);
       }
     });
   });
