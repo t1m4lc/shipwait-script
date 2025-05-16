@@ -1,35 +1,39 @@
-name: Build and Deploy to GitHub Pages
+name: Build and Deploy
 
 on:
   push:
     branches:
-      - main  # Lancement du workflow sur push dans main
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
+      # Checkout du code source
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      # Setup et build
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
       - name: Install dependencies
-        run: pnpm install
-
+        run: npm install
       - name: Build project
-        run: pnpm run build
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        run: npm run build
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+      
+      # Déployer vers un repo séparé contenant uniquement les fichiers build
+      - name: Push to deployment repo
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.PAT_TOKEN }}
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist  # Ton build Vite
-          publish_branch: gh-pages  # Branche dédiée au déploiement
+          source-directory: 'dist'
+          destination-github-username: 't1m4lc'
+          destination-repository-name: 'shipwait-script-dist'
+          target-branch: main
+          user-name: 't1m4lc'
+          target-directory: '/'  # Ceci indique de déployer à la racine

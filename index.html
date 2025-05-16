@@ -2,19 +2,39 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Snippet Preview</title>
-    <div id="waitly"></div>
-    <script
-    src="./dist/waitly-snippet.umd.js?test=NBaBNdaVGFYsDFY&projectId=93745e73-e778-40f5-98bc-37c0ad88c28f&ty=message&payload=Thank%20you%20for%20signing%20up%21%20We'll%20contact%20you%20soon.">
-  </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shipwait Test Page</title>
+
+    <!-- Add your Shipwait snippet here -->
+    <script defer src="https://cdn.jsdelivr.net/gh/t1m4lc/shipwait-script@latest/dist/main.js?projectId=93745e73-e778-40f5-98bc-37c0ad88c28f&ty=show_message&payload=Thank%20you%20for%20joining%20the%20waitlist!"></script>
   </head>
   <body>
-    <form>
-      <div style="display: flex; gap: 0.5rem;">
-        <input data-waitly type="email" placeholder="Enter your email" required />
-        <button type="submit">Join the waitlist</button>
-      </div>
-      <p data-waitly-message style="font-size: small;"></p>
-    </form>
+    <div
+      style="max-width: 500px; margin: 100px auto; padding: 20px; font-family: Arial, sans-serif;"
+    >
+      <h1>Test Your Shipwait Integration</h1>
+      <p>Enter an email address below to test your waitlist integration:</p>
+
+      <form style="margin-top: 20px;">
+        <!-- Add the data-shipwait attribute to your email input -->
+        <input
+          data-shipwait
+          type="email"
+          placeholder="Enter your email"
+          required
+          style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;"
+        />
+
+        <!-- Optional: Add a message container -->
+        <p data-shipwait-message style="min-height: 20px; color: green;"></p>
+
+        <button
+          type="submit"
+          style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer;"
+        >
+          Join Waitlist
+        </button>
+      </form>
+    </div>
   </body>
 </html>
