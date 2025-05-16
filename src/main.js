@@ -15,24 +15,24 @@
   const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
   if (!projectId) {
-    console.warn("[Waitly] Missing projectId in script src query params.");
+    console.warn("[Shipwait] Missing projectId in script src query params.");
     return;
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    const input = document.querySelector('input[data-waitly]');
+    const input = document.querySelector('input[data-shipwait]');
     if (!input) {
-      console.warn('[Waitly] No input with [data-waitly] attribute found.');
+      console.warn('[Shipwait] No input with [data-shipwait] attribute found.');
       return;
     }
 
     const form = input.closest('form');
     if (!form) {
-      console.warn('[Waitly] The input with [data-waitly] is not inside a <form>.');
+      console.warn('[Shipwait] The input with [data-shipwait] is not inside a <form>.');
       return;
     }
 
-    const messageEl = document.querySelector('p[data-waitly-message], div[data-waitly-message]');
+    const messageEl = document.querySelector('p[data-shipwait-message], div[data-shipwait-message]');
 
     function showMessage(msg) {
       if (messageEl) {
@@ -71,7 +71,7 @@
         }
 
         const data = await response.text();
-        console.log("[Waitly] Lead added:", data);
+        console.log("[Shipwait] Lead added:", data);
 
         if (ty === "redirect" && payload) {
           window.location.href = payload;
@@ -85,7 +85,7 @@
         input.value = "";
 
       } catch (err) {
-        console.error("[Waitly] Submission error:", err);
+        console.error("[Shipwait] Submission error:", err);
         showMessage(err.message || 'Server error');
       }
     });

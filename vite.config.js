@@ -5,7 +5,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/main.js'),
-      name: 'WaitlySnippet',
+      name: 'ShipwaitSnippet',
       fileName: () => `main.js`,
       formats: ['umd'],
     }
