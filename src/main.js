@@ -1,18 +1,18 @@
 (function () {
-  const scriptTag =
-    document.currentScript ||
-    Array.from(document.querySelectorAll("script")).find(
-      (s) =>
-        s.src?.includes("shipwait-script-dist") &&
-        s.hasAttribute("data-shipwait-id")
-    );
+  function getQueryParams(url) {
+    const queryString = url.split("?")[1] || "";
+    return Object.fromEntries(new URLSearchParams(queryString));
+  }
 
-  const projectId = scriptTag?.getAttribute("data-shipwait-id");
+  const currentScript = document.currentScript;
+  const params = getQueryParams(currentScript?.src || "");
+
+  const projectId = params.id
 
   const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
   if (!projectId) {
-    console.warn("[Shipwait] Missing projectId in script.");
+    console.warn("[Shipwait] Missing projectId in script!");
     return;
   }
 
@@ -23,9 +23,6 @@
       );
 
       if (!response.ok) {
-        console.warn(
-          `[Shipwait] Failed to fetch behaviors: ${response.status}`
-        );
         return null;
       }
 
@@ -33,7 +30,6 @@
 
       return result.data;
     } catch (error) {
-      console.warn("[Shipwait] Error fetching behaviors:", error);
       return null;
     }
   }
@@ -41,15 +37,11 @@
   document.addEventListener("DOMContentLoaded", async () => {
     const input = document.querySelector("input[data-shipwait]");
     if (!input) {
-      console.warn("[Shipwait] No input with [data-shipwait] attribute found.");
       return;
     }
 
     const form = input.closest("form");
     if (!form) {
-      console.warn(
-        "[Shipwait] The input with [data-shipwait] is not inside a <form>."
-      );
       return;
     }
 
@@ -95,8 +87,7 @@
           throw new Error(errorText);
         }
 
-        const data = await response.text();
-        console.log("[Shipwait] Lead added:", data);
+        await response.text();
 
         if (behaviorType === "redirect" && behaviorPayload) {
           window.location.href = behaviorPayload;
@@ -109,7 +100,6 @@
 
         input.value = "";
       } catch (err) {
-        console.error("[Shipwait] Submission error:", err);
         showMessage(err.message || "Server error");
       }
     });
