@@ -32,12 +32,11 @@
       return;
     }
 
-    const messageEl = document.querySelector('p[data-shipwait-message], div[data-shipwait-message]');
+    const messageEl = document.querySelector('[data-shipwait-message]');
 
     function showMessage(msg) {
       if (messageEl) {
         messageEl.textContent = msg;
-        messageEl.style.display = "block";
       } else {
         alert(msg);
       }
@@ -78,7 +77,7 @@
           return;
         }
 
-        if (ty === "message" && payload) {
+        if (ty === "show_message" && payload) {
           showMessage(payload);
         } 
         
