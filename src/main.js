@@ -1,17 +1,6 @@
-(function () {
-  function getQueryParams(url) {
-    const queryString = url.split("?")[1] || "";
-    return Object.fromEntries(new URLSearchParams(queryString));
-  }
-
-  const currentScript = document.currentScript;
-  const params = getQueryParams(currentScript?.src || "");
-
-  const projectId = params.projectId;
-  const ty = params.ty;       // "redirect" or "message"
-  const payload = params.payload;
+(function () {  
+  const projectId = document.currentScript?.getAttribute('data-shipwait-id');
   
-  // Define the baseUrl from environment variables with a fallback
   const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
   if (!projectId) {
@@ -19,7 +8,27 @@
     return;
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
+  async function fetchBehavior() {
+    try {
+      const response = await fetch(`${baseUrl}/api/submission-behaviors?projectId=${projectId}`);
+      
+      if (!response.ok) {
+        console.warn(`[Shipwait] Failed to fetch behaviors: ${response.status}`);
+        return null;
+      }
+      
+      const result = await response.json();
+      
+      return result.data;
+    } catch (error) {
+      console.warn("[Shipwait] Error fetching behaviors:", error);
+      return null;
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+
+    
     const input = document.querySelector('input[data-shipwait]');
     if (!input) {
       console.warn('[Shipwait] No input with [data-shipwait] attribute found.');
@@ -51,6 +60,11 @@
         return;
       }
 
+      const behavior = await fetchBehavior();
+    
+      const behaviorType = behavior?.type || 'do_nothing';
+      const behaviorPayload = behavior?.payload || null;
+
       try {
         const response = await fetch(`${baseUrl}/api/leads`, {
           method: "POST",
@@ -71,18 +85,18 @@
 
         const data = await response.text();
         console.log("[Shipwait] Lead added:", data);
+        
 
-        if (ty === "redirect" && payload) {
-          window.location.href = payload;
+        if (behaviorType === "redirect" && behaviorPayload) {
+          window.location.href = behaviorPayload;
           return;
         }
 
-        if (ty === "show_message" && payload) {
-          showMessage(payload);
+        if (behaviorType === "show_message" && behaviorPayload) {
+          showMessage(behaviorPayload);
         } 
         
         input.value = "";
-
       } catch (err) {
         console.error("[Shipwait] Submission error:", err);
         showMessage(err.message || 'Server error');
