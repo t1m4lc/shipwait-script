@@ -1,4 +1,6 @@
 (function () {
+  window.addEventListener('shipwait:init', initializeForm);
+
   function getQueryParams(url) {
     const queryString = url.split("?")[1] || "";
     return Object.fromEntries(new URLSearchParams(queryString));
@@ -7,7 +9,7 @@
   const currentScript = document.currentScript;
   const params = getQueryParams(currentScript?.src || "");
   const projectId = params.id
-  
+  od
   if (!projectId) {
     console.warn("[Shipwait] Missing projectId in script!");
     return;
